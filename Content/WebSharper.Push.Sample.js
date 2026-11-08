@@ -36,7 +36,7 @@ function describeEncodings(){
   return encodings_1==null||length(encodings_1)===0?"None reported.":concat(", ", encodings_1);
 }
 function readSyntheticEvent(){
-  if(typeof globalThis.PushEvent!="function")payload().Set("This page does not expose the PushEvent constructor; it is only available inside a service worker.");
+  if(globalThis.PushEvent===void 0)payload().Set("This page does not expose the PushEvent constructor; it is only available inside a service worker.");
   else {
     try {
       let r;
@@ -52,7 +52,8 @@ function readSyntheticEvent(){
 function registerWorker(){
   return new Promise((_1) => {
     _1(new Promise((_2) => {
-      _2(((new Worker(ScriptPath("workers", "WebSharper.Push.Sample.service-worker.js"), {type:"module"})).terminate(),globalThis.navigator.serviceWorker.register("Content/workers/WebSharper.Push.Sample.service-worker.js", {type:"module"}).then((a) => {
+      let r;
+      _2(((new Worker(ScriptPath("workers", "WebSharper.Push.Sample.service-worker.js"), {type:"module"})).terminate(),globalThis.navigator.serviceWorker.register("Content/workers/WebSharper.Push.Sample.service-worker.js", (r={},r.type="module",r)).then((a) => {
         set_registration(a);
         status().Set("Service worker registered.");
         return Promise.resolve(null);
@@ -302,7 +303,6 @@ function forall(f, s){
 function protect(s){
   return s==null?"":s;
 }
-class Exception extends Object_1 { }
 function NewFromSeq(fields){
   let _1;
   const r={};
@@ -321,6 +321,7 @@ function NewFromSeq(fields){
   }
   return r;
 }
+class Exception extends Object_1 { }
 function GetFieldValues(o){
   let r=[];
   let k;
