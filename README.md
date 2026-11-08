@@ -13,7 +13,8 @@ This repository contains:
 | Project | Purpose |
 | --- | --- |
 | `WebSharper.Push` | The binding: WIG definitions for `PushManager`, `PushSubscription`, `PushSubscriptionOptions`, `PushMessageData`, `PushEvent`, and their string enums. |
-| `WebSharper.Push.Sample` | An ASP.NET Core SPA sample that reports the browser's push capabilities, registers a service worker and drives the push subscription. The service worker is written in F# too. |
+| `WebSharper.Push.Extensions` | `[<Inline>]` helpers bridging the `WebSharper.ServiceWorker` binding (`pushManager`, the notification-click listener) with the Push types. |
+| `WebSharper.Push.Sample` | An ASP.NET Core SPA sample that reports the browser's push capabilities, registers a service worker and drives the push subscription. The service worker is written in F# too, on top of the `WebSharper.ServiceWorker` binding. |
 
 ## Live demos
 
@@ -55,8 +56,11 @@ git clone https://github.com/dotnet-websharper/PushAPI.git
 ```xml
 <ItemGroup>
   <ProjectReference Include="path/to/WebSharper.Push/WebSharper.Push.fsproj" />
+  <ProjectReference Include="path/to/WebSharper.Push.Extensions/WebSharper.Push.Extensions.fsproj" />
 </ItemGroup>
 ```
+
+The Extensions project builds on the `WebSharper.ServiceWorker` binding, which is also required.
 
 ## Usage
 
@@ -181,6 +185,8 @@ WebSharper.Push/            # binding (WIG definitions)
   Main.fs
   WebSharper.Push.fsproj
   wsconfig.json
+WebSharper.Push.Extensions/ # [<Inline>] helpers bridging the ServiceWorker binding
+  Library.fs
 WebSharper.Push.Sample/     # ASP.NET Core SPA sample
   Client.fs                 # the page and the F# service worker
   Startup.fs

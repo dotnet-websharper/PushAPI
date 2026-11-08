@@ -2,4 +2,5 @@ WebSharper
 WebSharper.FSharp
 WebSharper.UI
 WebSharper.AspNetCore
+WebSharper.ServiceWorker
 FSharp.Core
