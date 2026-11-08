@@ -52,14 +52,14 @@ function readSyntheticEvent(){
 function registerWorker(){
   return new Promise((_1) => {
     _1(new Promise((_2) => {
-      _2(((new Worker(ScriptPath("workers", "WebSharper.Push.Sample.service-worker.js"), {type:"module"})).terminate(),globalThis.navigator.serviceWorker.register("Content/workers/WebSharper.Push.Sample.service-worker.js", {type:"module"}).then((d) => {
-        set_registration(d);
+      _2(((new Worker(ScriptPath("workers", "WebSharper.Push.Sample.service-worker.js"), {type:"module"})).terminate(),globalThis.navigator.serviceWorker.register("Content/workers/WebSharper.Push.Sample.service-worker.js", {type:"module"}).then((a) => {
+        set_registration(a);
         status().Set("Service worker registered.");
         return Promise.resolve(null);
       })));
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
-      status().Set("Service worker registration failed: "+a.message);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
+      status().Set("Service worker registration failed: "+a_1.message);
       return Promise.resolve(null);
     }));
   });
@@ -77,13 +77,13 @@ function checkPermission(){
   return new Promise((_1) => {
     _1(new Promise((_2) => {
       let r;
-      _2(registration()==null?(status().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.permissionState((r={},r.userVisibleOnly=true,r)).then((d) => {
-        status().Set("Permission state: "+String(d)+".");
+      _2(registration()==null?(status().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.permissionState((r={},r.userVisibleOnly=true,r)).then((a) => {
+        status().Set("Permission state: "+String(a)+".");
         return Promise.resolve(null);
       }));
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
-      status().Set("Permission query failed: "+a.message);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
+      status().Set("Permission query failed: "+a_1.message);
       return Promise.resolve(null);
     }));
   });
@@ -91,19 +91,19 @@ function checkPermission(){
 function readSubscription(){
   return new Promise((_1) => {
     _1(new Promise((_2) => {
-      _2(registration()==null?(subscription().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.getSubscription().then((d) => {
-        if(d==null||d===void 0){
+      _2(registration()==null?(subscription().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.getSubscription().then((a) => {
+        if(a==null||a===void 0){
           subscription().Set("No subscription yet.");
           return Promise.resolve(null);
         }
         else {
-          const sub=d;
+          const sub=a;
           return sub==null?(subscription().Set("No subscription yet."),Promise.resolve(null)):(subscription().Set("Endpoint: "+sub.endpoint),Promise.resolve(null));
         }
       }));
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
-      subscription().Set("Could not read the subscription: "+a.message);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
+      subscription().Set("Could not read the subscription: "+a_1.message);
       return Promise.resolve(null);
     }));
   });
@@ -112,15 +112,15 @@ function subscribe(){
   return new Promise((_1) => {
     _1(new Promise((_2) => {
       let r;
-      _2(registration()==null?(status().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.subscribe((r={},r.userVisibleOnly=true,r)).then((d) => {
-        subscription().Set("Endpoint: "+d.endpoint);
+      _2(registration()==null?(status().Set("No service worker registration yet."),Promise.resolve(null)):registration().pushManager.subscribe((r={},r.userVisibleOnly=true,r)).then((a) => {
+        subscription().Set("Endpoint: "+a.endpoint);
         status().Set("Subscription created.");
         return Promise.resolve(null);
       }));
-    })["catch"]((d) => {
-      const a=unwrapExn(d);
+    })["catch"]((a) => {
+      const a_1=unwrapExn(a);
       subscription().Set("Subscribe failed.");
-      status().Set("Subscribe failed: "+a.message+" (a push service is required).");
+      status().Set("Subscribe failed: "+a_1.message+" (a push service is required).");
       return Promise.resolve(null);
     }));
   });
@@ -3085,7 +3085,7 @@ class Event_1 extends TemplateHole {
 }
 function Handler(name, callback){
   return Attr.A3((el) => {
-    el.addEventListener(name, (d) =>(callback(el))(d), false);
+    el.addEventListener(name, (o) =>(callback(el))(o), false);
   });
 }
 function OnAfterRender(callback){
@@ -3122,7 +3122,7 @@ function DynamicCustom(set_1, view){
 class Attr {
   static HandlerImpl(event, q){
     return Attr.A3((el) => {
-      el.addEventListener(event, (d) =>(q(el))(d), false);
+      el.addEventListener(event, (o) =>(q(el))(o), false);
     });
   }
   static Concat(xs){
