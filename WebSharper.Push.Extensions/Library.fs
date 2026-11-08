@@ -15,10 +15,6 @@ module Extensions =
     [<Inline "$registration.pushManager">]
     let pushManager (registration: ServiceWorkerRegistration) : PushManager = X<PushManager>
 
-    /// Adds a notificationclick listener. The ServiceWorker binding's accessor is misspelled.
-    [<Inline "$self.addEventListener('notificationclick', $handler)">]
-    let onNotificationClick (self: obj) (handler: obj -> unit) : unit = X<unit>
-
     /// Closes the notification of a notificationclick event.
     [<Inline "$event.notification.close()">]
     let closeNotification (event: obj) : unit = X<unit>

@@ -40,9 +40,9 @@ module WorkerEntry =
             Console.Log("Push event received: " + body)
             let options = new NotificationOptions(Body = body, Tag = "websharper-push-demo")
             event.WaitUntil(scope.Registration.ShowNotification("Push received", options))
-        onNotificationClick scope (fun event ->
+        scope.OnNotificationClick <- fun event ->
             closeNotification event
-            scope.Clients.OpenWindow("../../") |> ignore)
+            scope.Clients.OpenWindow("../../") |> ignore
 
 [<JavaScript>]
 module Client =
