@@ -32,7 +32,9 @@
         <section class="card">
             <h2>Service worker</h2>
             <p class="hint">
-                The page registers <code>service-worker.js</code> on load and asks it for a push subscription.
+                The service worker is written in F# too. The <code>Worker</code> constructor compiles its
+                entry point into a standalone script, and the page registers that script with
+                <code>navigator.serviceWorker.register</code>.
             </p>
             <p class="status" role="status">${status}</p>
         </section>
