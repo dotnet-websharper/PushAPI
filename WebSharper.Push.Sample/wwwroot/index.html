@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WebSharper Push API Demo</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%234f46e5'/%3E%3Cpath d='M8 2.5a3.5 3.5 0 0 1 3.5 3.5v2l1 1.5h-9l1-1.5v-2A3.5 3.5 0 0 1 8 2.5zm0 11a1.5 1.5 0 0 1-1.4-1h2.8a1.5 1.5 0 0 1-1.4 1z' fill='white'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" type="text/css" href="Content/WebSharper.Push.Sample.css" />
+    <link rel="stylesheet" type="text/css" href="site.css" />
+    <script type="module" src="Content/WebSharper.Push.Sample.head.js"></script>
+</head>
+<body>
+    <main class="page">
+        <header class="hero">
+            <h1>Push API Demo</h1>
+            <p class="lede">
+                Subscribe to the browser's push service and read push payloads with the
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Push_API" target="_blank" rel="noreferrer">Push API</a>.
+                The Push API needs a secure context (HTTPS or localhost), a registered service worker and a
+                push service that sends the encrypted messages.
+            </p>
+        </header>
+
+        <section class="card">
+            <h2>Capabilities</h2>
+            <p class="hint">
+                Static content encodings reported by <code>PushManager.supportedContentEncodings</code>.
+            </p>
+            <p class="status">${encodings}</p>
+        </section>
+
+        <section class="card">
+            <h2>Service worker</h2>
+            <p class="hint">
+                The page registers <code>service-worker.js</code> on load and asks it for a push subscription.
+            </p>
+            <p class="status" role="status">${status}</p>
+        </section>
+
+        <section class="card">
+            <h2>Subscription</h2>
+            <p class="hint">
+                The subscription hangs off <code>registration.pushManager</code>. A real push needs a
+                VAPID key and a server, so <code>subscribe()</code> may report an error here.
+            </p>
+            <p class="status">${subscription}</p>
+            <div class="actions">
+                <button class="btn btn-primary" ws-onclick="checkPermission">Check permission</button>
+                <button class="btn" ws-onclick="readSubscription">Read subscription</button>
+                <button class="btn" ws-onclick="subscribe">Subscribe</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Synthetic PushEvent</h2>
+            <p class="hint">
+                The binding's <code>PushEvent</code> and <code>PushMessageData</code> types are read inside the
+                service worker's <code>push</code> handler. The button below builds a synthetic event in the page
+                where the browser exposes the constructor.
+            </p>
+            <p class="status">${payload}</p>
+            <div class="actions">
+                <button class="btn btn-primary" ws-onclick="syntheticEvent">Read synthetic event</button>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="Content/WebSharper.Push.Sample.min.js"></script>
+</body>
+</html>
