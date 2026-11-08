@@ -16,5 +16,8 @@ tags
 files
     ../WebSharper.Push/bin/Release/netstandard2.0/WebSharper.Push.dll ==> lib/netstandard2.0
     ../WebSharper.Push/bin/Release/netstandard2.0/WebSharper.Push.xml ==> lib/netstandard2.0
+    ../WebSharper.Push.Extensions/bin/Release/netstandard2.0/WebSharper.Push.Extensions.dll ==> lib/netstandard2.0
+    ../WebSharper.Push.Extensions/bin/Release/netstandard2.0/WebSharper.Push.Extensions.xml ==> lib/netstandard2.0
 dependencies
         WebSharper ~> LOCKEDVERSION:[3]
+        WebSharper.ServiceWorker ~> LOCKEDVERSION:[3]

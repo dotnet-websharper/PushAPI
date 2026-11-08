@@ -9,6 +9,7 @@
     <None Include="wsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WebSharper.Push.Extensions\WebSharper.Push.Extensions.fsproj" />
     <ProjectReference Include="..\WebSharper.Push\WebSharper.Push.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

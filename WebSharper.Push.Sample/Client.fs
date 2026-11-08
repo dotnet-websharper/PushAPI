@@ -12,46 +12,19 @@ open WebSharper.Push
 // The service worker is written in F# as well.
 //
 // The Worker constructor compiles its entry point into a standalone script
-// (WebSharper.Push.Sample.service-worker.js) and the browser runs it. That
+// (WebSharper.Push.Sample.service-worker.js) and the browser runs it. The
 // script is exactly what a service worker needs, so we do not keep the
 // dedicated worker: we hand the generated script to navigator.serviceWorker.
 //
-// The service worker global scope is not modelled by core, so the APIs that
-// only exist there (registration, clients) are reached through inline
-// accessors. The push payload itself is read through the binding's PushEvent
-// and PushMessageData types.
+// The service-worker APIs (ServiceWorkerGlobalScope, Clients, the lifecycle
+// events) come from the WebSharper.ServiceWorker binding; the push-specific
+// accessors (pushManager, the push listener, waitUntil, closeNotification) come
+// from WebSharper.Push.Extensions.
 // ---------------------------------------------------------------------------
 [<JavaScript>]
-module ServiceWorker =
-    [<Inline "$self.skipWaiting()">]
-    let skipWaiting (self: obj) : Promise<unit> = X<Promise<unit>>
-
-    [<Inline "$self.clients.claim()">]
-    let claimClients (self: obj) : Promise<unit> = X<Promise<unit>>
-
-    [<Inline "$self.addEventListener('install', $handler)">]
-    let onInstall (self: obj) (handler: obj -> unit) : unit = X<unit>
-
-    [<Inline "$self.addEventListener('activate', $handler)">]
-    let onActivate (self: obj) (handler: obj -> unit) : unit = X<unit>
-
-    [<Inline "$self.addEventListener('push', $handler)">]
-    let onPush (self: obj) (handler: PushEvent -> unit) : unit = X<unit>
-
-    [<Inline "$self.addEventListener('notificationclick', $handler)">]
-    let onNotificationClick (self: obj) (handler: obj -> unit) : unit = X<unit>
-
-    [<Inline "$self.registration.showNotification($title, { body: $body, tag: 'websharper-push-demo' })">]
-    let showNotification (self: obj) (title: string) (body: string) : Promise<unit> = X<Promise<unit>>
-
-    [<Inline "$event.waitUntil($promise)">]
-    let waitUntil (event: obj) (promise: obj) : unit = X<unit>
-
-    [<Inline "$event.notification.close()">]
-    let closeNotification (event: obj) : unit = X<unit>
-
-    [<Inline "$self.clients.openWindow($url)">]
-    let openWindow (self: obj) (url: string) : Promise<obj> = X<Promise<obj>>
+module WorkerEntry =
+    open WebSharper.ServiceWorker
+    open WebSharper.Push.Extensions
 
     /// Reads the text payload of a push event through the binding's PushMessageData.
     let payloadText (event: PushEvent) =
@@ -59,19 +32,23 @@ module ServiceWorker =
         if Optional.isDefined data then data.Value.Text() else "No payload"
 
     let EntryPoint (self: DedicatedWorkerGlobalScope) =
-        let scope = box self
-        onInstall scope (fun _ -> skipWaiting scope |> ignore)
-        onActivate scope (fun _ -> claimClients scope |> ignore)
-        onPush scope (fun event ->
-            let body = payloadText event
+        let scope = As<ServiceWorkerGlobalScope> (box self)
+        scope.OnInstall <- fun _ -> scope.SkipWaiting() |> ignore
+        scope.OnActivate <- fun _ -> scope.Clients.Claim() |> ignore
+        scope.OnPush <- fun event ->
+            let body = payloadText (As<PushEvent> (box event))
             Console.Log("Push event received: " + body)
-            waitUntil (box event) (showNotification scope "Push received" body))
+            let options = new NotificationOptions(Body = body, Tag = "websharper-push-demo")
+            event.WaitUntil(scope.Registration.ShowNotification("Push received", options))
         onNotificationClick scope (fun event ->
             closeNotification event
-            waitUntil event (openWindow scope "../../"))
+            scope.Clients.OpenWindow("../../") |> ignore)
 
 [<JavaScript>]
 module Client =
+    open WebSharper.ServiceWorker
+    open WebSharper.Push.Extensions
+
     // The template is loaded from the DOM, so editing index.html and refreshing
     // the browser is enough; a rebuild is only needed when holes change.
     type IndexTemplate = Template<"wwwroot/index.html", ClientLoad.FromDocument>
@@ -81,25 +58,7 @@ module Client =
     let subscription = Var.Create "No subscription yet."
     let payload = Var.Create "No payload yet."
 
-    // `navigator.serviceWorker` is not modelled by core's Navigator, so reach it
-    // through inline accessors. The Push API hangs off the service worker registration.
-    [<Inline "$navigator.serviceWorker">]
-    let serviceWorker (navigator: obj) : obj = X<obj>
-
-    // The generated script lives in Content/workers, so its scope is that
-    // directory. The registration returned by register() is the one we use: the
-    // page itself is not controlled by the worker, but the Push API only needs
-    // the registration, not page control.
-    [<Inline "$sw.register($path, { type: 'module' })">]
-    let register (sw: obj) (path: string) : Promise<obj> = X<Promise<obj>>
-
-    [<Inline "$reg.pushManager">]
-    let pushManager (reg: obj) : PushManager = X<PushManager>
-
-    [<Inline "typeof globalThis.PushEvent">]
-    let pushEventExposed () : string = X<string>
-
-    let mutable registration : obj = null
+    let mutable registration : ServiceWorkerRegistration = null
 
     let describeEncodings () =
         let encodings = PushManager.SupportedContentEncodings
@@ -112,10 +71,12 @@ module Client =
                 // The Worker constructor compiles the service worker's entry
                 // point into a standalone script. We only need that script, so
                 // the dedicated worker is terminated straight away.
-                let worker = new Worker("service-worker", fun self -> ServiceWorker.EntryPoint self)
+                let worker = new Worker("service-worker", fun self -> WorkerEntry.EntryPoint self)
                 worker.Terminate()
-                let sw = serviceWorker JS.Window.Navigator
-                let! reg = register sw "Content/workers/WebSharper.Push.Sample.service-worker.js"
+                let! reg =
+                    JS.Window.Navigator.ServiceWorker.Register(
+                        "Content/workers/WebSharper.Push.Sample.service-worker.js",
+                        new ServiceWorkerRegistrationOptions(Type = WorkerType.Module))
                 registration <- reg
                 status := "Service worker registered."
             with e ->
@@ -171,7 +132,8 @@ module Client =
         }
 
     let readSyntheticEvent () =
-        if pushEventExposed () <> "function" then
+        let constructor : obj = JS.Global?PushEvent
+        if constructor ===. JS.Undefined then
             payload := "This page does not expose the PushEvent constructor; it is only available inside a service worker."
         else
             try
