@@ -15,10 +15,10 @@ function EntryPoint(self_1){
     const options=(r={},r.body=body,r.tag="websharper-push-demo",r);
     return event.waitUntil(self_1.registration.showNotification("Push received", options));
   };
-  self_1.addEventListener("notificationclick", (event) => {
+  self_1.onnotificationclick=(event) => {
     event.notification.close();
     self_1.clients.openWindow("../../");
-  });
+  };
 }
 function payloadText(event){
   const data=event.data;
