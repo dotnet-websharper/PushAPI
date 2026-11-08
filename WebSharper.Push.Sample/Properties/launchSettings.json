@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "WebSharper.Push.Sample": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:50560;http://localhost:50561"
+    }
+  }
+}

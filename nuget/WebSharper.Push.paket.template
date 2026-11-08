@@ -1,0 +1,20 @@
+type file
+id WebSharper.Push
+authors
+    IntelliFactory
+owners
+    IntelliFactory
+repositoryType git
+repositoryUrl https://github.com/dotnet-websharper/PushAPI/
+licenseUrl https://github.com/dotnet-websharper/PushAPI/blob/main/LICENSE.md
+iconUrl https://github.com/dotnet-websharper/core/raw/websharper50/tools/WebSharper.png
+projectUrl https://github.com/dotnet-websharper/PushAPI
+description
+    WebSharper bindings for Push
+tags
+    Web JavaScript F# C#
+files
+    ../WebSharper.Push/bin/Release/netstandard2.0/WebSharper.Push.dll ==> lib/netstandard2.0
+    ../WebSharper.Push/bin/Release/netstandard2.0/WebSharper.Push.xml ==> lib/netstandard2.0
+dependencies
+        WebSharper ~> LOCKEDVERSION:[3]
