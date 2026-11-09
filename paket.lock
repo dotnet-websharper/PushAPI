@@ -21,7 +21,7 @@ NUGET
       HtmlAgilityPack (>= 1.12.4)
       WebSharper (>= 10.1.10.687 < 10.1.11)
   remote: https://nuget.pkg.github.com/dotnet-websharper/index.json
-    WebSharper.ServiceWorker (10.1.0.699)
+    WebSharper.ServiceWorker (10.1.0.700)
       WebSharper (>= 10.1.10 < 10.2)
 
 GROUP wsbuild
